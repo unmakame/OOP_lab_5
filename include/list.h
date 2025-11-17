@@ -1,7 +1,10 @@
 #pragma once
+
 #include <memory_resource>
 #include <iterator>
 #include <cassert>
+#include <utility>
+#include <cstddef>
 
 template <typename T>
 class List {
@@ -10,7 +13,8 @@ public:
         T value;
         Node* next;
         template <typename... Args>
-        Node(Args&&... args) : value(std::forward<Args>(args)...), next(nullptr) {}
+        explicit Node(Args&&... args)
+            : value(std::forward<Args>(args)...), next(nullptr) {}
     };
 
     using allocator_type = std::pmr::polymorphic_allocator<Node>;
@@ -31,8 +35,9 @@ public:
     const T& front() const;
 
     bool empty() const noexcept;
-    size_t size() const noexcept;
+    std::size_t size() const noexcept;
 
+    // forward iterator
     class iterator {
     public:
         using iterator_category = std::forward_iterator_tag;
@@ -40,28 +45,62 @@ public:
         using pointer           = T*;
         using reference         = T&;
 
-        iterator(Node* n = nullptr) : node(n) {}
+        explicit iterator(Node* n = nullptr) : node(n) {}
 
         reference operator*() const { return node->value; }
         pointer   operator->() const { return &node->value; }
 
-        iterator& operator++() { node = node->next; return *this; }
+        iterator& operator++() { node = node ? node->next : nullptr; return *this; }
         iterator  operator++(int) { auto tmp = *this; ++(*this); return tmp; }
 
         bool operator==(const iterator& other) const { return node == other.node; }
         bool operator!=(const iterator& other) const { return node != other.node; }
 
+        Node* base() const { return node; }
+
     private:
         Node* node;
     };
 
+    // const forward iterator
+    class const_iterator {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type        = const T;
+        using pointer           = const T*;
+        using reference         = const T&;
+
+        explicit const_iterator(const Node* n = nullptr) : node(n) {}
+
+        reference operator*() const { return node->value; }
+        pointer   operator->() const { return &node->value; }
+
+        const_iterator& operator++() { node = node ? node->next : nullptr; return *this; }
+        const_iterator  operator++(int) { auto tmp = *this; ++(*this); return tmp; }
+
+        bool operator==(const const_iterator& other) const { return node == other.node; }
+        bool operator!=(const const_iterator& other) const { return node != other.node; }
+
+        const Node* base() const { return node; }
+
+    private:
+        const Node* node;
+    };
+
+    // iterator accessors
     iterator begin();
     iterator end();
+
+    const_iterator begin() const;
+    const_iterator end() const;
+
+    const_iterator cbegin() const;
+    const_iterator cend() const;
 
 private:
     allocator_type alloc;
     Node* head;
-    size_t sz;
+    std::size_t sz;
 };
 
-#include "List.ipp"
+#include "list.ipp"

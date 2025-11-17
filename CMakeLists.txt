@@ -21,10 +21,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 add_executable(tests
-    tests/test_main.cpp
-    tests/test_list.cpp
+    src/allocator.cpp
+    tests/ListIteratorsTest.cpp
     tests/test_allocator.cpp
-    src/allocator.cpp     
 )
 
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/include)

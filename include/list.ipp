@@ -1,4 +1,5 @@
-#pragma once
+#pragma once    
+#include <algorithm> 
 
 template <typename T>
 List<T>::List(std::pmr::memory_resource* mr)
@@ -60,7 +61,7 @@ bool List<T>::empty() const noexcept {
 }
 
 template <typename T>
-size_t List<T>::size() const noexcept {
+std::size_t List<T>::size() const noexcept {
     return sz;
 }
 
@@ -72,4 +73,24 @@ typename List<T>::iterator List<T>::begin() {
 template <typename T>
 typename List<T>::iterator List<T>::end() {
     return iterator(nullptr);
+}
+
+template <typename T>
+typename List<T>::const_iterator List<T>::begin() const {
+    return const_iterator(head);
+}
+
+template <typename T>
+typename List<T>::const_iterator List<T>::end() const {
+    return const_iterator(nullptr);
+}
+
+template <typename T>
+typename List<T>::const_iterator List<T>::cbegin() const {
+    return const_iterator(head);
+}
+
+template <typename T>
+typename List<T>::const_iterator List<T>::cend() const {
+    return const_iterator(nullptr);
 }
