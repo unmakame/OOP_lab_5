@@ -10,7 +10,7 @@
 class pmr_map_resource : public std::pmr::memory_resource {
 public:
     pmr_map_resource() = default;
-    ~pmr_map_resource() override;
+    ~pmr_map_resource() noexcept;
 
     size_t allocated_count() const;
     size_t free_count() const;

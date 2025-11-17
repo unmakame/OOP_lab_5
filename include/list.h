@@ -20,11 +20,10 @@ public:
     using allocator_type = std::pmr::polymorphic_allocator<Node>;
 
     explicit List(std::pmr::memory_resource* mr = std::pmr::get_default_resource());
-    ~List();
+    ~List() noexcept;
 
     List(const List&) = delete;
     List& operator=(const List&) = delete;
-
     template <typename... Args>
     void push_front(Args&&... args);
 
@@ -37,13 +36,12 @@ public:
     bool empty() const noexcept;
     std::size_t size() const noexcept;
 
-    // forward iterator
     class iterator {
     public:
         using iterator_category = std::forward_iterator_tag;
-        using value_type        = T;
-        using pointer           = T*;
-        using reference         = T&;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
 
         explicit iterator(Node* n = nullptr) : node(n) {}
 
@@ -62,13 +60,12 @@ public:
         Node* node;
     };
 
-    // const forward iterator
     class const_iterator {
     public:
         using iterator_category = std::forward_iterator_tag;
-        using value_type        = const T;
-        using pointer           = const T*;
-        using reference         = const T&;
+        using value_type = const T;
+        using pointer = const T*;
+        using reference = const T&;
 
         explicit const_iterator(const Node* n = nullptr) : node(n) {}
 
@@ -87,7 +84,6 @@ public:
         const Node* node;
     };
 
-    // iterator accessors
     iterator begin();
     iterator end();
 
